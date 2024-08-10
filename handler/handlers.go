@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/weslayer/go-url-shortner/shortener"
-	"github.com/weslayer/go-url-shortner/store"
+	"github.com/weslayer/go-url-shortener/shortener"
+	"github.com/weslayer/go-url-shortener/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
