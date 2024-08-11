@@ -1,6 +1,5 @@
 package shortener
 
-
 import (
 	"crypto/sha256"
 	"fmt"
