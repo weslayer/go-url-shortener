@@ -2,7 +2,8 @@ document.getElementById('shorten-form').addEventListener('submit', async functio
     e.preventDefault();
 
     const longUrl = document.getElementById('long-url').value;
-    const userId = document.getElementById('user-id').value;
+    const userId = "e0dba740-fc4b-4977-872c-d360239e6b1a"
+    // document.getElementById('user-id').value;
 
     const response = await fetch('/create-short-url', {
         method: 'POST',
