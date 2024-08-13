@@ -12,6 +12,7 @@ type UrlCreationRequest struct {
 	UserId  string `json:"user_id" binding:"required"`
 }
 
+//creates the short url by calling functions within the shortener directory: http://localhost:9808/create-short-url/
 func CreateShortUrl(c *gin.Context) {
 	var creationRequest UrlCreationRequest
 	if err := c.ShouldBindJSON(&creationRequest); err != nil {
@@ -30,6 +31,7 @@ func CreateShortUrl(c *gin.Context) {
 
 }
 
+// when shortened link is put into search bar, it will redirect to the original url
 func HandleShortUrlRedirect(c *gin.Context) {
 	shortUrl := c.Param("shortUrl")
 	initialUrl := store.RetrieveInitialUrl(shortUrl)
