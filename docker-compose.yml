@@ -9,13 +9,22 @@ services:
     networks:
       - app-network
 
-  app:
-    build: .
-    container_name: url-shortener-app
+  backend:
+    build: ./backend
+    container_name: url-shortener-backend
     ports:
       - "9808:9808"
     depends_on:
       - redis
+    networks:
+      - app-network
+
+
+  frontend:
+    build: ./frontend
+    container_name: url-shortener-frontend
+    ports:
+      - "5173:5173" 
     networks:
       - app-network
 
