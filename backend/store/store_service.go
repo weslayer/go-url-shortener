@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"os"
 	"time"
 )
 
@@ -19,10 +20,15 @@ var (
 const CacheDuration = 6 * time.Hour
 
 func InitializeStore() *StorageService {
+	redisHost := os.Getenv("REDIS_HOST")
+	if redisHost == "" {
+		redisHost = "redis-server:6379"
+	}
+
 	redisClient := redis.NewClient(&redis.Options{
-		Addr: 	  "redis-server:6379",
-		Password: "",
-		DB: 	  0,
+		Addr:     redisHost,
+		Password: "", // Add password if needed
+		DB:       0,
 	})
 
 	pong, err := redisClient.Ping(ctx).Result()
@@ -40,7 +46,6 @@ func SaveUrlMapping(shortUrl string, originalUrl string, userId string) {
 	if err != nil {
 		panic(fmt.Sprintf("Failed saving key url | Error: %v - shortUrl: %s - originalUrl: %s\n", err, shortUrl, originalUrl))
 	}
-
 }
 
 func RetrieveInitialUrl(shortUrl string) string {

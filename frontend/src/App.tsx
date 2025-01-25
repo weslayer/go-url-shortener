@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:9808';
+
 const App: React.FC = () => {
   const [longUrl, setLongUrl] = useState<string>('');
-  // const [userId, setUserId] = useState<string>(''); for user auth later
   const [shortUrl, setShortUrl] = useState<string>('');
   const [error, setError] = useState<string>('');
 
   const handleShortenUrl = async () => {
     try {
-      const response = await axios.post('http://localhost:9808/create-short-url', {
-        long_url: longUrl,
-        user_id: "e0dba740-fc4b-4977-872c-d360239e6b1a"
+      const response = await axios.post(`${API_URL}/create-short-url`, {
+        long_url: longUrl
       });
 
       setShortUrl(response.data.short_url);

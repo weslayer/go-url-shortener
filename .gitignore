@@ -1,0 +1,4 @@
+# Add to existing .gitignore
+.env
+*.env
+dump.rdb 

@@ -6,15 +6,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/weslayer/go-url-shortener/handler"
 	"github.com/weslayer/go-url-shortener/store"
+	"os"
 )
 
 func main() {
 	r := gin.Default()
 
-	// CORS middleware setup
+	corsOrigin := os.Getenv("CORS_ORIGIN")
+	if corsOrigin == "" {
+		corsOrigin = "http://localhost:5173"
+	}
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"}, // Adjust this based on your frontend's origin
-		AllowMethods:     []string{"POST", "GET"}, // Allow these HTTP methods
+		AllowOrigins:     []string{corsOrigin},
+		AllowMethods:     []string{"POST", "GET"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
@@ -27,6 +32,9 @@ func main() {
 	r.POST("/create-short-url", handler.CreateShortUrl)
 
 	r.GET("/:shortUrl", handler.HandleShortUrlRedirect)
+
+	// Add health check endpoint
+	r.GET("/health", handler.HealthCheck)
 
 	store.InitializeStore()
 

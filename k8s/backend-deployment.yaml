@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortener-backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: ${AWS_ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com/url-shortener-backend:latest
+        ports:
+        - containerPort: 9808
+        env:
+        - name: REDIS_HOST
+          value: "redis-server:6379"
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: url-shortener-secrets
+              key: redis-password
+        - name: CORS_ORIGIN
+          valueFrom:
+            secretKeyRef:
+              name: url-shortener-secrets
+              key: cors-origin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend
+  ports:
+  - port: 9808
+    targetPort: 9808
+  type: ClusterIP 

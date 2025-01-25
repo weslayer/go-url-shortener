@@ -28,6 +28,15 @@ func base58Encoded(bytes []byte) string {
 
 // generates shorted link by taking the sha256 of initiallink + userid, turns into long number, base58 that big number for new link!
 func GenerateShortLink(initialLink string, userId string) string {
+	// If userId is empty, just hash the initial link
+	if userId == "" {
+		urlHashBytes := sha256Of(initialLink)
+		generatedNumber := new(big.Int).SetBytes(urlHashBytes).Uint64()
+		finalString := base58Encoded([]byte(fmt.Sprintf("%d", generatedNumber)))
+		return finalString[:8]
+	}
+	
+	// Existing logic for when userId is provided (though it won't be used in this case)
 	urlHashBytes := sha256Of(initialLink + userId)
 	generatedNumber := new(big.Int).SetBytes(urlHashBytes).Uint64()
 	finalString := base58Encoded([]byte(fmt.Sprintf("%d", generatedNumber)))

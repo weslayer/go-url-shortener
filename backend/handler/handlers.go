@@ -9,7 +9,6 @@ import (
 
 type UrlCreationRequest struct {
 	LongUrl string `json:"long_url" binding:"required"`
-	UserId  string `json:"user_id" binding:"required"`
 }
 
 //creates the short url by calling functions within the shortener directory: http://localhost:9808/create-short-url/
@@ -20,8 +19,8 @@ func CreateShortUrl(c *gin.Context) {
 		return
 	}
 
-	shortUrl := shortener.GenerateShortLink(creationRequest.LongUrl, creationRequest.UserId)
-	store.SaveUrlMapping(shortUrl, creationRequest.LongUrl, creationRequest.UserId)
+	shortUrl := shortener.GenerateShortLink(creationRequest.LongUrl, "")
+	store.SaveUrlMapping(shortUrl, creationRequest.LongUrl, "")
 
 	host := "http://localhost:9808/"
 	c.JSON(200, gin.H{
@@ -36,4 +35,10 @@ func HandleShortUrlRedirect(c *gin.Context) {
 	shortUrl := c.Param("shortUrl")
 	initialUrl := store.RetrieveInitialUrl(shortUrl)
 	c.Redirect(302, initialUrl)
+}
+
+func HealthCheck(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"status": "healthy",
+	})
 }
