@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import './App.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:9808';
@@ -17,8 +17,11 @@ const App: React.FC = () => {
 
       setShortUrl(response.data.short_url);
       setError('');
-    } catch (err: any) {
-      setError('Error shortening URL. Please try again.');
+    } catch (error) {
+      const errorMessage = error instanceof AxiosError 
+        ? error.response?.data?.error || 'Error shortening URL'
+        : 'Error shortening URL';
+      setError(errorMessage);
       setShortUrl('');
     }
   };
