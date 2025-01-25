@@ -1,30 +1,62 @@
 package store
 
 import (
-	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
+
+	"github.com/alicebob/miniredis/v2"
+	"github.com/stretchr/testify/assert"
 )
 
-var testStoreService = &StorageService{}
+var mr *miniredis.Miniredis
 
-func init() {
-	testStoreService = InitializeStore()
+func TestMain(m *testing.M) {
+	// Set up miniredis
+	var err error
+	mr, err = miniredis.Run()
+	if err != nil {
+		panic(err)
+	}
+
+	// Set Redis host to miniredis address
+	os.Setenv("REDIS_HOST", mr.Addr())
+
+	// Run tests
+	code := m.Run()
+
+	// Cleanup
+	mr.Close()
+	os.Exit(code)
 }
 
-func TestStoreInit(t *testing.T) {
-	assert.True(t, testStoreService.redisClient != nil)
+func TestSaveUrlMapping(t *testing.T) {
+	// Initialize store with miniredis
+	InitializeStore()
+
+	shortUrl := "abc123"
+	originalUrl := "http://example.com"
+	userId := "user123"
+
+	// Test saving URL mapping
+	SaveUrlMapping(shortUrl, originalUrl, userId)
+
+	// Verify the saved value
+	result := RetrieveInitialUrl(shortUrl)
+	assert.Equal(t, originalUrl, result)
 }
 
-func TestInsertionAndRetrieval(t *testing.T) {
-	initialLink := "https://www.guru3d.com/news-story/spotted-ryzen-threadripper-pro-3995wx-processor-with-8-channel-ddr4,2.html"
-	userUUId := "e0dba740-fc4b-4977-872c-d360239e6b1a"
-	shortURL := "Jsz4k57oAX"
+func TestRetrieveInitialUrl(t *testing.T) {
+	// Initialize store with miniredis
+	InitializeStore()
 
-	// Persist data mapping
-	SaveUrlMapping(shortURL, initialLink, userUUId)
+	shortUrl := "xyz789"
+	originalUrl := "http://test.com"
+	userId := "user456"
 
-	// Retrieve initial URL
-	retrievedUrl := RetrieveInitialUrl(shortURL)
+	// Save a URL mapping
+	SaveUrlMapping(shortUrl, originalUrl, userId)
 
-	assert.Equal(t, initialLink, retrievedUrl)
+	// Test retrieving the URL
+	result := RetrieveInitialUrl(shortUrl)
+	assert.Equal(t, originalUrl, result)
 }
