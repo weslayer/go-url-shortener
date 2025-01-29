@@ -22,6 +22,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
+    - name: Create ECR repositories
+      run: |
+        aws ecr create-repository --repository-name $ECR_REPOSITORY_FRONTEND --region ${{ secrets.AWS_REGION }} || true
+        aws ecr create-repository --repository-name $ECR_REPOSITORY_BACKEND --region ${{ secrets.AWS_REGION }} || true
+
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
