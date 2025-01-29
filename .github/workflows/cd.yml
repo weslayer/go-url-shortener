@@ -5,8 +5,8 @@ on:
     branches: [ "main" ]
 
 env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  ECR_REPOSITORY_FRONTEND: url-shortener-frontend
+  AWS_REGION: us-west-2  # default region
+  ECR_REPOSITORY_FRONTEND: url-shortener-frontend 
   ECR_REPOSITORY_BACKEND: url-shortener-backend
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} # secrets prefix - stored in github secrets
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
@@ -29,8 +29,8 @@ jobs:
     - name: Build and push Frontend image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:${{ github.sha }} ./frontend
+      run: | 
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:${{ github.sha }} ./frontend 
         docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:${{ github.sha }}
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:${{ github.sha }} $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest
         docker push $ECR_REGISTRY/$ECR_REPOSITORY_FRONTEND:latest
@@ -58,4 +58,5 @@ jobs:
         
         # Wait for deployments to be ready
         kubectl rollout status deployment/url-shortener-frontend
-        kubectl rollout status deployment/url-shortener-backend 
+        kubectl rollout status deployment/url-shortener-backend
+        
