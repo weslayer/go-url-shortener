@@ -1,6 +1,6 @@
 # URL Shortener
 
-A URL shortener service built with Go, React, and Redis. DO NOT RUN THIS PLZ IT COSTS 10 CENTS AN HOUR
+A URL shortener service built with Go, React, and Redis. DO NOT DEPLOY TS (THIS)
 
 ## Local Development
 ```docker-compose up --build```
